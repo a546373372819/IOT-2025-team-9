@@ -1,0 +1,35 @@
+{
+    "RPIR1": {
+        "simulated": true,
+        "pin": 7
+    },
+    "RPIR2": {
+        "simulated": true,
+        "pin": 23
+    },
+    "DPIR1": {
+        "simulated": true,
+        "pin": 19
+    },
+    "DUS1": {
+        "simulated": true,
+        "trig_pin": 16,
+        "echo_pin": 15
+    },
+    "DB": {
+        "simulated": true,
+        "pin": 29
+    },
+    "DMS":{
+        "simulated": true,
+        "pins": [22,24,26,28,32,36,38,40]
+    },
+    "DS":{
+        "simulated": true,
+        "pin": 37
+    },
+    "DL":{
+        "simulated": true,
+        "pin": 31
+    }
+}
