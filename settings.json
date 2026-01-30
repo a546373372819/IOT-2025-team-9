@@ -2,7 +2,7 @@
     "device": {
         "pi_id": "PI1",
         "device_name": "iot-edge-01",
-        "location": "Lab"
+        "location": "Gajba"
     },
     "mqtt": {
         "host": "localhost",
