@@ -8,5 +8,22 @@
         "simulated": true,
         "i2c_address": 39,
         "topic": "iot/sensors/lcd"
+    },
+    "DHT1": {
+        "simulated": true,
+        "pin": 4,
+        "humidity_topic": "iot/sensors/dht1/humidity",
+        "temperature_topic": "iot/sensors/dht1/temperature"
+    },
+    "DHT2": {
+        "simulated": true,
+        "pin": 5,
+        "humidity_topic": "iot/sensors/dht2/humidity",
+        "temperature_topic": "iot/sensors/dht2/temperature"
+    },
+    "DPIR3": {
+        "simulated": true,
+        "pin": 23,
+        "topic": "iot/sensors/pir3"
     }
 }
