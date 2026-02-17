@@ -4,7 +4,6 @@ except ImportError:
     pass
 import time
 
-
 class DMS:
     def __init__(self, pins):
         self.pins = pins
@@ -63,8 +62,15 @@ class DMS:
 
 
 def run_dms_loop(dms, callback, stop_event):
+    last_event_time = 0
+    cooldown = 0.3 
+
     while not stop_event.is_set():
         event = dms.check_for_event()
         if event:
-            callback(event)
-        time.sleep(0.1)
+            current_time = time.time()
+            if current_time - last_event_time > cooldown:
+                callback(event)
+                last_event_time = current_time
+        
+        time.sleep(0.05)

@@ -1,5 +1,3 @@
-import random
-import time
 import queue
 
 def run_dms_simulator(callback, stop_event, dms_queue):

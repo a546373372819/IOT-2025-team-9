@@ -10,7 +10,7 @@ def run_ds_simulator(delay,callback, stop_event,):
     :param delay: Time in seconds between each event simulation.
     """
     next_key = "open"
-    last_key="close"# Initial state of the door
+    last_key="closed"# Initial state of the door
 
     while not stop_event.is_set():
 

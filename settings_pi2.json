@@ -25,5 +25,11 @@
         "pin": 11,
         "humidity_topic": "iot/sensors/dht3/humidity",
         "temperature_topic": "iot/sensors/dht3/temperature"
+    },
+    "4SD": {
+        "simulated": true,
+        "digit_pins": [22, 27, 17, 24],
+        "segment_pins": [5, 4, 23, 8, 7, 10, 18, 25],
+        "topic": "iot/sensors/4sd"
     }
 }
