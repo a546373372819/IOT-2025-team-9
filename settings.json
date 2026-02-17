@@ -21,7 +21,8 @@
             "DPIR2": "iot/sensors/pir2",
             "DUS2": "iot/sensors/uds2",
             "DS2": "iot/sensors/ds2",
-            "4SD": "iot/sensors/4sd"
+            "4SD": "iot/sensors/4sd",
+            "LCD": "iot/sensors/lcd"
         }
     },
     "influxdb": {

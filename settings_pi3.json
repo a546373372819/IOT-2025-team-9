@@ -1,0 +1,12 @@
+{
+    "device": {
+        "pi_id": "PI3",
+        "device_name": "iot-edge-03",
+        "location": "Gajba"
+    },
+    "LCD": {
+        "simulated": true,
+        "i2c_address": 39,
+        "topic": "iot/sensors/lcd"
+    }
+}

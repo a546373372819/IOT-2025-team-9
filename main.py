@@ -11,6 +11,7 @@ from components.uds import run_uds
 from components.db import run_buzzer
 from components.dht import run_dht
 from components.four_segment import run_display
+from components.lcd import run_lcd
 
 import os
 import time
@@ -36,6 +37,7 @@ if __name__ == "__main__":
     dms_queue = queue.Queue()
     db_queue = queue.Queue()
     display_queue = queue.Queue()
+    lcd_queue = queue.Queue()
 
     try:
         device_info = settings.get("device", {"pi_id": "PI1", "device_name": "unknown"})
@@ -60,6 +62,8 @@ if __name__ == "__main__":
                     run_dht(sensor_name, sensor_cfg, threads, stop_event, publisher)
                 case "4SD":
                     run_display(sensor_name, sensor_cfg, threads, stop_event, display_queue, publisher)
+                case "LCD":
+                    run_lcd(sensor_name, sensor_cfg, threads, stop_event, lcd_queue, publisher)
                 case _:
                     pass 
 
@@ -74,6 +78,8 @@ if __name__ == "__main__":
                     db_queue.put(user_input)
                 elif user_input.startswith("disp "):
                     display_queue.put(user_input)
+                elif user_input.startswith("lcd "):
+                    lcd_queue.put(user_input)
                 time.sleep(1)
             except KeyboardInterrupt:
                 print('Stopping app')
