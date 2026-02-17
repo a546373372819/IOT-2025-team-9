@@ -56,23 +56,68 @@ class PCF8574_GPIO(object):#Standardization function interface
 		self.chip.digitalWrite(pin,value)
             
 class LCD:
-    """
-    Hardware wrapper for an LCD connected via PCF8574
-    """
+    # Standard I2C Backpack Pin Mapping
+    MASK_RS = 0x01  # P0 - Register Select
+    MASK_RW = 0x02  # P1 - Read/Write
+    MASK_E  = 0x04  # P2 - Enable
+    MASK_BL = 0x08  # P3 - Backlight
+    # Data pins D4-D7 are mapped to P4-P7
+
     def __init__(self, i2c_address):
         self.pcf = PCF8574_GPIO(i2c_address)
+        self.backlight = self.MASK_BL
+        self.init_lcd()
+
+    def pulse_enable(self, data):
+        # Pulse Enable pin High then Low to "latch" the data
+        self.pcf.chip.writeByte(data | self.MASK_E | self.backlight)
+        time.sleep(0.0005)
+        self.pcf.chip.writeByte((data & ~self.MASK_E) | self.backlight)
+        time.sleep(0.0005)
+
+    def write_4_bits(self, value):
+        self.pcf.chip.writeByte(value | self.backlight)
+        self.pulse_enable(value)
+
+    def send_command(self, cmd):
+        # Send high nibble, then low nibble (RS = 0)
+        self.write_4_bits(cmd & 0xF0)
+        self.write_4_bits((cmd << 4) & 0xF0)
+
+    def send_data(self, data):
+        # Send high nibble, then low nibble (RS = 1)
+        self.write_4_bits((data & 0xF0) | self.MASK_RS)
+        self.write_4_bits(((data << 4) & 0xF0) | self.MASK_RS)
+
+    def init_lcd(self):
+        """ The mandatory 'Handshake' sequence to wake up the LCD """
+        time.sleep(0.05)
+        self.write_4_bits(0x30) # Special wakeup 1
+        time.sleep(0.005)
+        self.write_4_bits(0x30) # Special wakeup 2
+        time.sleep(0.001)
+        self.write_4_bits(0x30) # Special wakeup 3
+        self.write_4_bits(0x20) # Set to 4-bit mode
+        
+        # Now we can use send_command for configuration
+        self.send_command(0x28) # 2 lines, 5x8 font
+        self.send_command(0x0C) # Display ON, Cursor OFF
+        self.send_command(0x01) # Clear display
+        time.sleep(0.005)
 
     def display_value(self, value: str):
-        """
-        For simplicity, write raw bits of value to PCF8574 pins
-        """
-        value_int = int(value) if value.isdigit() else 0
-        for pin in range(8):
-            self.pcf.output(pin, (value_int >> pin) & 1)
-            
-    def cleanup(self):
-        pass  # PCF8574 doesn't need GPIO.cleanup
+        """ Now correctly displays strings/letters! """
+        # Clear screen first if you want fresh text every time
+        self.send_command(0x01) 
+        time.sleep(0.002)
+        
+        for char in str(value):
+            self.send_data(ord(char))
 
+    def cleanup(self):
+        self.send_command(0x01) # Clear screen on exit
+
+#NOTE: Send string of max 16 chars
 def run_lcd_loop(name, lcd, stop_event, lcd_queue, callback=None):
     while not stop_event.is_set():
         try:
