@@ -31,5 +31,10 @@
         "digit_pins": [22, 27, 17, 24],
         "segment_pins": [5, 4, 23, 8, 7, 10, 18, 25],
         "topic": "iot/sensors/4sd"
+    },
+    "BTN": {
+        "simulated": true,
+        "pin": 16,
+        "topic": "iot/sensors/btn"
     }
 }
