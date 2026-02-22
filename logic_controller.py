@@ -34,7 +34,7 @@ class LogicController:
         self.timer_running = False
         self.timer_blinking = False
         self.timer_visible = True
-        self.timer_add_step = 30
+        self.timer_add_step = 10
         self.last_lcd_rotation = 0
         self.last_lcd_index = 0
 
@@ -99,16 +99,6 @@ class LogicController:
         if key == "*":
             self._arm_security()
             return
-        if key in {"A", "B", "C", "D"}:
-            colors = {"B": "red", "C": "green", "D": "blue"}
-            if key == "A":
-                self.rgb_on = not self.rgb_on
-            else:
-                self.rgb_on = True
-                self.rgb_color = colors[key]
-            self.queues["rgb"].put(f"rgb {self.rgb_color if self.rgb_on else 'off'}")
-            self._emit_logic_event("RGB", f"{self.rgb_on}:{self.rgb_color}")
-            return
 
         if key.isdigit():
             self.pin_buffer += key
@@ -136,6 +126,7 @@ class LogicController:
                 if self.timer_blinking:
                     self.timer_blinking = False
                     self.timer_visible = True
+                    return
                 self.timer_remaining += self.timer_add_step
                 self.timer_running = True
                 return
@@ -167,6 +158,7 @@ class LogicController:
                 return
 
             if name == "GYRO" and isinstance(value, dict):
+                # TODO: use actual value
                 magnitude = math.sqrt(sum(float(value.get(k, 0)) ** 2 for k in ("gx", "gy", "gz")))
                 if magnitude > 700:
                     self._set_alarm(True, "gsg_movement")
