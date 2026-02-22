@@ -159,9 +159,9 @@ class LogicController:
             if name in ("DPIR1", "DPIR2") and value == "motion_detected":
                 self.queues["dl"].put("dl on")
                 self._update_occupancy_from_motion(name)
-                return
 
-            if name in ("DPIR3", "RPIR1", "RPIR2", "RPIR3") and value == "motion_detected":
+            if name in ("DPIR1", "DPIR2", "DPIR3") and value == "motion_detected":
+                print(self.occupancy)
                 if self.occupancy == 0:
                     self._set_alarm(True, "perimeter_motion_empty")
                 return
