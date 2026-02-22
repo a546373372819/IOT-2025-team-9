@@ -41,7 +41,7 @@ class LogicController:
         self.rgb_on = False
         self.rgb_color = "white"
 
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()
 
     def start(self):
         self.tick_thread = threading.Thread(target=self._tick_loop, daemon=True)
@@ -61,6 +61,7 @@ class LogicController:
             )
 
     def _set_alarm(self, active, reason="unknown"):
+        print("ALARM!!!")
         if self.alarm_active == active:
             return
         self.alarm_active = active
@@ -84,6 +85,7 @@ class LogicController:
             self.pending_intrusion_at = None
             was_alarm = self.alarm_active
             self.security_armed = False
+            print("DISARMED")
         if was_alarm:
             self._set_alarm(False, "pin")
         else:
@@ -93,6 +95,7 @@ class LogicController:
         if key == "#":
             self.pin_buffer = ""
             return
+        # TODO: enter pin instead of *
         if key == "*":
             self._arm_security()
             return
@@ -195,6 +198,7 @@ class LogicController:
                 if self.pending_arm_at and now >= self.pending_arm_at:
                     self.security_armed = True
                     self.pending_arm_at = None
+                    print("ARMED!!!")
                     self._emit_logic_event("SECURITY", "armed")
 
                 if self.pending_intrusion_at and now >= self.pending_intrusion_at:
