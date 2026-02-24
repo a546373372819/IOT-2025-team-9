@@ -35,6 +35,7 @@ class LogicController:
         self.timer_blinking = False
         self.timer_visible = True
         self.timer_add_step = 10
+
         self.last_lcd_rotation = 0
         self.last_lcd_index = 0
 
@@ -42,6 +43,7 @@ class LogicController:
         self.rgb_color = "white"
 
         self.lock = threading.RLock()
+
 
     def start(self):
         self.tick_thread = threading.Thread(target=self._tick_loop, daemon=True)
@@ -70,6 +72,7 @@ class LogicController:
         else:
             self.security_armed = False
             self.pending_intrusion_at = None
+
         state = "entered" if active else "cleared"
         self._emit_logic_event("ALARM", state, {"reason": reason})
 
@@ -86,6 +89,7 @@ class LogicController:
             was_alarm = self.alarm_active
             self.security_armed = False
             print("DISARMED")
+
         if was_alarm:
             self._set_alarm(False, "pin")
         else:
@@ -127,6 +131,7 @@ class LogicController:
                     self.timer_blinking = False
                     self.timer_visible = True
                     return
+
                 self.timer_remaining += self.timer_add_step
                 self.timer_running = True
                 return
@@ -153,12 +158,14 @@ class LogicController:
 
             if name in ("DPIR1", "DPIR2", "DPIR3") and value == "motion_detected":
                 print(self.occupancy)
+
                 if self.occupancy == 0:
                     self._set_alarm(True, "perimeter_motion_empty")
                 return
 
             if name == "GYRO" and isinstance(value, dict):
                 # TODO: use actual value
+
                 magnitude = math.sqrt(sum(float(value.get(k, 0)) ** 2 for k in ("gx", "gy", "gz")))
                 if magnitude > 700:
                     self._set_alarm(True, "gsg_movement")
@@ -174,6 +181,7 @@ class LogicController:
             return
         delta = recent[-1] - recent[0]
         entering = delta < 0
+
         self.occupancy = max(0, self.occupancy + (1 if entering else -1))
         self._emit_logic_event("OCCUPANCY", self.occupancy, {"trigger": pir_name, "direction": "in" if entering else "out"})
 
@@ -185,12 +193,14 @@ class LogicController:
                 for ds_name, opened_at in self.door_open_since.items():
                     if opened_at and now - opened_at >= 5:
                         print(now - opened_at)
+
                         self._set_alarm(True, f"{ds_name}_unlocked")
 
                 if self.pending_arm_at and now >= self.pending_arm_at:
                     self.security_armed = True
                     self.pending_arm_at = None
                     print("ARMED!!!")
+
                     self._emit_logic_event("SECURITY", "armed")
 
                 if self.pending_intrusion_at and now >= self.pending_intrusion_at:
